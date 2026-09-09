@@ -4,6 +4,18 @@
 
 # 资源目录（Assets）
 
+## 大狗 Tap 本地适配
+
+`dagou-tap/` 保存个人本地适配使用的 BGRA 屏幕图片与 16 kHz PCM 音频。
+来源为[马克杯的公开网页玩具](https://www.bilibili.com/toy/Dagou-Tap/index.html)。
+只包含默认公开素材，不含投币解锁素材。这些媒体不由本仓库以 MIT 协议授权；
+发布素材或含素材的固件之前需获得再分发许可。转换与集成方式见
+[应用说明](../docs/dagou-tap.zh_CN.md)。
+
+`fonts/dagou_ui.c` 是思源黑体 SC Regular 的 144 字形子集，14 px、4 bpp，
+由 `tools/prepare_dagou_font.py` 与 lv_font_conv 1.5.3 生成。
+SIL OFL 许可保留在 `fonts/dagou-font-LICENSE.txt`。
+
 本目录集中存放可复用的资源（字库、图片、音乐等），按资源类型分子目录管理。每个资源放在其类型对应的子目录，并记录放置路径、命名方式、集成方式与来源/许可。二进制资源（字体、图片、音频）不属于纯 markdown 文档，请勿与文档混放。涉及版权/授权的资源需注明来源与许可。
 
 ## 字库（fonts）
