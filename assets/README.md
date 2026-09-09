@@ -12,6 +12,12 @@ Keep each asset in the matching subdirectory and document its destination, namin
 
 Store reusable font files and generated font sources in `fonts/`.
 
+- `fonts/niuma_font.c`: Source Han Sans SC Regular, 14 px, 4 bpp, ASCII plus
+  the non-ASCII characters in `main/niuma_*` sources. Compiled by the NiuMa
+  application. SIL Open Font License: `fonts/niuma-font-LICENSE.txt`.
+  Regenerate with `node tools/prepare_niuma_font.cjs FONT.otf LV_FONT_CONV.js`
+  using Source Han Sans SC Regular and `lv_font_conv` 1.5.3.
+
 - Use descriptive names that include the family, weight, size, and format when relevant.
 - Document the source, license, character range, conversion command, and expected destination.
 - Check Flash and internal-RAM impact before adding a font; the ESP32-C3 has no PSRAM.

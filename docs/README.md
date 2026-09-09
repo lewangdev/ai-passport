@@ -113,6 +113,9 @@ LICENSE                  Repository license
 
 ## Documentation index
 
+- [NiuMa implementation and acceptance ledger](assets/niuma-development.md) — fork application scope and implementation evidence.
+- [NiuMa player guide](assets/niuma-user-guide.md) — controls, care, games, career, settings and saves.
+
 Repository documentation is organized by function area. `authoritative` documents define development or collaboration requirements; `reference` documents provide background or an index.
 
 - [`docs/development/`](development/README.md) — engineering rules and reusable workflows: the `ai-guide.md`, `engineering/`, `ci/`, and `release/` areas. Its README lists them.

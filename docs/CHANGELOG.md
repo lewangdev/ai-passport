@@ -6,6 +6,89 @@
 
 ## Unreleased
 
+- Added distinct rice/noodle dishes and water/coffee/milk-tea cups, refined the
+  ponytail character's short rounded face, and replaced irrelevant tea-game
+  target/position text with the actual sipping/busy state.
+
+- Corrected office seating so legs appear below the desk, added burnout fatigue
+  dots, and moved the meal away from the face. Full queued-button career tests
+  reach all directions, purchases and memories without assigning progress.
+
+- Added morning summaries with week/day, restored needs and weekend guidance.
+  Each memory now has its own story, unlock conditions, date and scene; the
+  album marks collected entries and the life milestone keeps play open-ended.
+
+- Insufficient coins now offer free-meal/recovery confirmations; exhausted
+  actions link to settlement or sleep and employee stats. Failed actions spend
+  nothing. Long-press gestures now require two seconds, enforced at build time.
+
+- Added music-rest confirmation and playback using the original melody without
+  changing the global music preference, plus a live learning notebook.
+  Overtime confirmation now defaults to Cancel.
+
+- Added the six-style gallery with current-style identification, explanations
+  and free cycling. Resignation now shows the departure scene and offers rest
+  or employer browsing; rehiring clears obsolete confirmation history.
+
+- Long NiuMa menus now display a page counter alongside the title; selection
+  crosses pages and wraps between the first and last item.
+
+- Added the in-development NiuMa office-pet application with pixel characters,
+  care actions, six minigames, inventory, events, sound, and bilingual screens.
+  Wage settlement now leads to an evening at home; sleeping advances the day.
+  Added five career directions with lasting effects and first-entry dates,
+  an employee badge, and price-labelled non-mutating previews for all 12 items.
+  Volume/brightness previews can be cancelled without affecting saved settings;
+  save status updates live and provides explicit failure/retry feedback.
+  Minigames now provide pre-play instructions, cancellation without spending,
+  and a base-action-only alternative. Tea-break warnings precede danger;
+  action previews reflect actual capped stats, coffee and career modifiers.
+  Storage initialization retries now re-read the active slot and generation,
+  preventing successful saves from being superseded by older progress at reboot.
+  Production-worker fault-injection tests are included in static validation.
+  Failed startup loads now offer a read-only retry and confirmed reset.
+  Autosave cannot write a default character before creation; loading gestures
+  are discarded instead of replayed after recovery.
+  Battery status now occupies the top-right corner with a low-charge indicator
+  at 15% or below; unavailable readings remain unknown. Device status shows
+  audio readiness and offers a test sound without interrupting gameplay.
+  Minigame OK gestures now distinguish clicks from pause holds without spending
+  an attempt on long press. Added all-option layout/glyph checks and a bilingual
+  NiuMa player guide.
+  Daily events now show actual stat, skill and relationship changes; event-based
+  friendship growth unlocks its dated achievement. Completed events cannot be
+  selected again, and overtime/team choices explain unmet requirements.
+  Meeting gameplay now has six readable topics and three meaningful responses,
+  eight-second rounds, distinct growth effects, suggested alternatives and
+  single-settlement rewards rather than a marked-target reflex test.
+  Going home now descends three floors using a timed lift or stairs, with
+  bypassable meeting obstacles, progress-based coins and an early-exit bonus.
+  Meeting and route selections stay fixed after a response is submitted.
+  Added animated desk-cleaning, treatment, private restroom/washing, drinking
+  and cooking scenes. Coffee and tea now use cups, not bento artwork; walking
+  alternates leg poses and carries luggage only in the resignation scene.
+  Static validation now covers every action-to-scene mapping, four-color output,
+  bounded deterministic drawing, character variants and animation changes.
+  Basic meals and bento no longer dominate play-style scoring; deliberate cooking
+  still contributes to lifestyle. Added natural-action playthroughs proving all
+  five directions, 12 items, eight dated achievements, burnout recovery and six
+  reversible styles, with save roundtrips throughout.
+  Fixed a reproduced save-status race: completing an older write no longer
+  clears a newer request's pending flag before it reaches the queue. Request
+  tickets cover repeated revisions, counter wrap, failures and submissions
+  during writes; read-only reload remains blocked while a request is pending.
+  Added gentle burnout/recovery notices after sleep, with recovery and social
+  shortcuts. Continuing a burnout save restores the reminder; opening it never
+  consumes an action. Natural controller playthroughs cover both transitions.
+  Action previews and receipts now show actual skill, XP, action and relationship
+  gains, including capped gains. The home screen shows all five needs; weekends
+  offer walking instead of work, while unemployed characters can choose a path.
+  Salary review now shows its countdown, requirements and actual before/after
+  pay and rank. Capped pay cannot produce a false successful raise, and flexible
+  company pay follows salary increases even after rank stops increasing.
+  The development save format is NMA4 (244 bytes); older development saves are
+  not migrated. Full gameplay acceptance and device testing remain pending.
+
 - Added the supplied 80-byte CW2017 profile for the specified 520 mAh cell, including content/update-flag checks, verified writes, the required restart sequence, and bounded SOC-readiness polling.
 
 - Reorganized the documentation by function area with a dual entry point: the root `AGENTS.md` is now a thin router (hard constraints + task routing only) and the detailed AI workflow lives in `docs/development/ai-guide.md`; `agent-guide.md` was folded in. `docs/development/` gained a second level (`engineering/`, `ci/`, `release/`), and the `plays/` application archive and `experiences/` moved into a `docs/reference/` area with a dedicated README. Removed `docs/software-design/` (empty scaffold); folded the three `assets/{fonts,images,music}/README` leaves into the `assets/` README; flattened the six `project-completion` sub-documents into a single file; and unified each directory to a single README, eliminating every `INDEX` file and a duplicated experience index. All cross-references and bibliographic links were updated; no content was dropped.

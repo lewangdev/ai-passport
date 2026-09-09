@@ -1,5 +1,17 @@
 idf_component_register(
     SRCS "main.c"
+         "niuma_main.c"
+         "niuma_app.c"
+         "niuma_view.c"
+         "../assets/fonts/niuma_font.c"
+         "niuma_model.c"
+         "niuma_game.c"
+         "niuma_save.c"
+         "niuma_events.c"
+         "niuma_storage.c"
+         "niuma_synth.c"
+         "niuma_audio.c"
+         "niuma_art.c"
          "ui_pixel.c"
          "ui_pixel_math.c"
          "demo_display.c"
@@ -13,3 +25,4 @@ idf_component_register(
     INCLUDE_DIRS "."
     REQUIRES bsp bt esp_event esp_hw_support esp_netif esp_timer esp_wifi nvs_flash
 )
+target_compile_definitions(${COMPONENT_LIB} PRIVATE LV_LVGL_H_INCLUDE_SIMPLE)

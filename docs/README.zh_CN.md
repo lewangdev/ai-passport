@@ -1,5 +1,9 @@
 # FoloToy AI Passport
 
+[牛马歌子实现与验收清单](assets/niuma-development.zh_CN.md) — Fork 应用范围与实现证据。
+
+[牛马歌子玩家指南](assets/niuma-user-guide.zh_CN.md) — 操作、养成、小游戏、职业、设置与存档。
+
 [English](README.md) | 简体中文
 
 FoloToy AI Passport 是一个开放式可穿戴 AI 硬件，本仓库是这款 AI 硬件的开发基线。它不只展示"板子能运行什么"，还把开发应用所需的**硬件事实、稳定接口、资源边界、参考实现和验收方法**放在同一仓库中。

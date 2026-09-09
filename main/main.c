@@ -103,7 +103,7 @@ static void on_key(bsp_btn_t btn, bsp_btn_ev_t ev, void *user) {
     bsp_lvgl_unlock();
 }
 
-void app_main(void) {
+void bsp_demo_main(void) {
     ESP_LOGI(TAG, "FoloToy AI Passport BSP demo 启动");
     esp_sleep_wakeup_cause_t wakeup = esp_sleep_get_wakeup_cause();
     if (wakeup != ESP_SLEEP_WAKEUP_UNDEFINED) {

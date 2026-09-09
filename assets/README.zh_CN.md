@@ -10,6 +10,12 @@
 
 可复用的字库文件与生成的字库源码放在 `fonts/`。
 
+- `fonts/niuma_font.c`：思源黑体简体中文 Regular，14 px、4 bpp，包含 ASCII
+  以及 `main/niuma_*` 源码中的非 ASCII 字符，由牛马歌子应用编译使用。
+  SIL 开放字体许可证：`fonts/niuma-font-LICENSE.txt`。
+  使用思源黑体简体中文 Regular 和 `lv_font_conv` 1.5.3，执行
+  `node tools/prepare_niuma_font.cjs FONT.otf LV_FONT_CONV.js` 可重新生成。
+
 - 命名要能反映字族、字重、字级与格式。
 - 记录来源、许可、字符范围、转换命令与目标放置路径。
 - 添加字库前评估 Flash 与内部 RAM 影响；ESP32-C3 无 PSRAM。
