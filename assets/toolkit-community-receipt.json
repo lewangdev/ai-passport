@@ -1,0 +1,16 @@
+{
+  "service": "https://ai-passport.folotoy.cn",
+  "projectId": 251,
+  "revisionId": 403,
+  "slug": "community-b2db19cb",
+  "statusAtSubmission": "pending",
+  "stateVersion": 1,
+  "title_zh": "随身小宇宙：六合一搭子",
+  "title_en": "Pocket Universe: Six-in-One Companion",
+  "category": "productivity",
+  "sourceUrl": "https://github.com/lewangdev/ai-passport",
+  "firmwareSize": 835104,
+  "firmwareSha256": "ac915a1ea2b20f64d436667083c22566b2fc033751b56ed16e82f5a641b4bbb0",
+  "cover": "images/toolkit-community-cover.png",
+  "coverSha256": "41d8d6a6e3e7e6965d9e756d3e0f831852320eaa8ceee8075e2283df7e43684b"
+}

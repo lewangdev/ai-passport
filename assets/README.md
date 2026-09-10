@@ -10,6 +10,14 @@ Keep each asset in the matching subdirectory and document its destination, namin
 
 ## Fonts
 
+The toolkit embeds `fonts/toolkit_font_16.c`, a 16 px / 4 bpp subset of Source
+Han Sans SC Medium, renamed Toolkit Font. Its SIL OFL 1.1 notice is retained in
+`fonts/toolkit-font-LICENSE.txt`. Regenerate from the repository root using
+`node tools/prepare_toolkit_font.cjs <font.otf> <lv_font_conv.js>`; it selects
+ASCII plus characters in the toolkit source. Original pixel sprites and
+synthesized chirps live in `main/toolkit_view.c` and `main/toolkit_main.c` under
+the repository license. See the [application guide](../README.md).
+
 Store reusable font files and generated font sources in `fonts/`.
 
 - Use descriptive names that include the family, weight, size, and format when relevant.

@@ -1,5 +1,8 @@
 idf_component_register(
-    SRCS "main.c"
+    SRCS "toolkit_main.c"
+         "toolkit_model.c"
+         "toolkit_view.c"
+         "../assets/fonts/toolkit_font_16.c"
          "ui_pixel.c"
          "ui_pixel_math.c"
          "demo_display.c"

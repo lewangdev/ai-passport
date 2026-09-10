@@ -8,6 +8,13 @@
 
 ## 字库（fonts）
 
+六合一应用嵌入 `fonts/toolkit_font_16.c`，为思源黑体 SC Medium 的 16 px／4 bpp
+子集，改名为 Toolkit Font。SIL OFL 1.1 许可保留于
+`fonts/toolkit-font-LICENSE.txt`。在仓库根目录运行
+`node tools/prepare_toolkit_font.cjs <font.otf> <lv_font_conv.js>` 可重新生成，
+收集源码字符及 ASCII。原创像素图形、合成音效位于 `main/toolkit_view.c`、
+`main/toolkit_main.c`，使用仓库许可。参见[应用指南](../README.zh_CN.md)。
+
 可复用的字库文件与生成的字库源码放在 `fonts/`。
 
 - 命名要能反映字族、字重、字级与格式。
