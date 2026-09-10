@@ -42,6 +42,7 @@ static nm_action_t pending_action;
 static nm_scene_t result_scene;
 static char result_title[80],result_body[512];
 static bool loaded,started,sleeping,adjusting,game_paid,game_press_pending;
+static bool splash=true;
 static bool save_request_failed;
 static uint8_t adjustment_original;
 static uint32_t last_tick,last_input,last_draw;
@@ -131,6 +132,11 @@ static const char *game_cue(void){
 }
 static void describe(void){
     memset(&view,0,sizeof(view));view.kind=NM_VIEW_MENU;view.scene=NM_SCENE_STAND;
+    if(splash){
+        view.kind=NM_VIEW_SPLASH;
+        copy(view.hint,sizeof(view.hint),started?tr("按任意键进入游戏","Press any key to enter"):tr("正在读取存档，请稍候。","Loading your save..."));
+        return;
+    }
     switch(page){
     case P_BOOT:title("牛马歌子","NiuMa");view.kind=NM_VIEW_SCENE;
         if(!started){copy(view.body,sizeof(view.body),tr("正在读取存档，请稍候。","Loading your save. Please wait."));break;}
@@ -421,6 +427,13 @@ static void key_event(key_t key){
         if(key.event==BSP_BTN_CLICK){sleeping=false;bsp_display_backlight(state.brightness);}
         return; /* Consume complete wake gesture, never select a menu item. */
     }
+    if(splash){
+        if(key.event==BSP_BTN_CLICK || key.event==BSP_BTN_DOUBLE || key.event==BSP_BTN_LONG){
+            splash=false;
+            if(state.key_sound)nm_audio_play(NM_SFX_KEY);
+        }
+        return; /* Dismiss only: never create, resume or modify a save here. */
+    }
     if(key.event==BSP_BTN_LONG && key.key==BSP_BTN_OK){
         if(page==P_RESET){uint32_t rev=state.revision+1;bool gender=state.gender;nm_init(&state,lv_tick_get(),gender,0);state.revision=rev;loaded=false;save_request_failed=!nm_storage_request(&state);depth=0;page=P_CREATE;selection=0;}
         else if(page==P_GAME){game_press_pending=false;go(P_GAME_PAUSE);}
@@ -464,7 +477,7 @@ static void timer(lv_timer_t *t){
         bsp_display_backlight(state.brightness);last_input=now;
     }
     key_t key;while(xQueueReceive(keys,&key,0)==pdTRUE){key_event(key);describe();}
-    if(!sleeping && state.idle_seconds && now-last_input>state.idle_seconds*1000u){sleeping=true;bsp_display_backlight(0);save();}
+    if(!splash && !sleeping && state.idle_seconds && now-last_input>state.idle_seconds*1000u){sleeping=true;bsp_display_backlight(0);save();}
     /* Lost release/hold events must not freeze the game indefinitely. */
     if(game_press_pending && now-last_input>3000)game_press_pending=false;
     if(!sleeping && page==P_GAME && !game_press_pending){

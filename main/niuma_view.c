@@ -5,6 +5,8 @@
 #include <string.h>
 
 LV_FONT_DECLARE(niuma_font);
+LV_IMAGE_DECLARE(niuma_cover);
+static lv_obj_t *splash_picture;
 static lv_obj_t *screen,*heading,*page_label,*status_label,*battery_label,*body,*hint,*picture,*rows[5],*row_labels[5];
 static uint16_t art_pixels[NM_ART_W*NM_ART_H];
 static lv_image_dsc_t art_image;
@@ -57,6 +59,7 @@ static nm_icon_t menu_icon(const char *text){
     return NM_ICON_MORE;
 }
 static void draw_chrome(lv_event_t *event){
+    if(chrome_kind==NM_VIEW_SPLASH)return;
     lv_layer_t *layer=lv_event_get_layer(event);
     icon(layer,NM_ICON_CALENDAR,16,9,1,ink);
     icon(layer,NM_ICON_SOUND,128,9,1,ink);
@@ -135,6 +138,10 @@ bool nm_view_init(void){
     lv_obj_set_style_pad_all(screen,0,0);lv_obj_remove_flag(screen,LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_event_cb(screen,draw_chrome,LV_EVENT_DRAW_POST_END,NULL);
     lv_obj_add_event_cb(screen,draw_corners,LV_EVENT_DRAW_POST_END,NULL);
+    splash_picture=lv_image_create(screen);
+    lv_image_set_src(splash_picture,&niuma_cover);
+    lv_obj_set_pos(splash_picture,0,0);
+    lv_obj_add_flag(splash_picture,LV_OBJ_FLAG_HIDDEN);
     status_label=label(screen,34,6,90,22);battery_label=label(screen,195,6,29,22);
     lv_obj_add_flag(battery_label,LV_OBJ_FLAG_HIDDEN);
     lv_obj_set_style_text_align(battery_label,LV_TEXT_ALIGN_RIGHT,0);
@@ -168,6 +175,21 @@ void nm_view_draw(const nm_view_t *v,const nm_state_t *s,const nm_game_t *g,nm_s
         chrome_store.phase!=store.phase || chrome_store.pending!=store.pending;
     chrome_state=*s;chrome_store=store;chrome_kind=v->kind;
     chrome_selected=v->selected;
+    if(v->kind==NM_VIEW_SPLASH){
+        lv_obj_t *hidden[]={heading,page_label,status_label,battery_label,body,picture,wallet};
+        for(unsigned i=0;i<sizeof(hidden)/sizeof(hidden[0]);++i)lv_obj_add_flag(hidden[i],LV_OBJ_FLAG_HIDDEN);
+        for(unsigned i=0;i<5;++i){lv_obj_add_flag(rows[i],LV_OBJ_FLAG_HIDDEN);lv_obj_add_flag(metrics[i],LV_OBJ_FLAG_HIDDEN);}
+        lv_obj_remove_flag(splash_picture,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_pos(hint,8,287);lv_obj_set_size(hint,224,22);
+        lv_label_set_text(hint,v->hint);
+        if(chrome_changed)lv_obj_invalidate(screen);
+        return;
+    }
+    lv_obj_add_flag(splash_picture,LV_OBJ_FLAG_HIDDEN);
+    lv_obj_remove_flag(status_label,LV_OBJ_FLAG_HIDDEN);
+    lv_obj_remove_flag(heading,LV_OBJ_FLAG_HIDDEN);
+    lv_obj_remove_flag(body,LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_pos(hint,4,294);lv_obj_set_size(hint,232,21);
     char top[100],battery[24];
     bool low=store.battery>=0 && store.battery<=15;
     if(store.battery<0)snprintf(battery,sizeof(battery),s->english?"BAT --":"电量 --");

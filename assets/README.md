@@ -25,6 +25,13 @@ Store reusable font files and generated font sources in `fonts/`.
 
 ## Images
 
+- `images/niuma/community-cover-v1.png`: user-supplied cover for the startup
+  screen, preserved unchanged. `niuma_cover.c` is its 240 x 320 RGB565 version.
+  Regenerate with `python3 tools/prepare_niuma_cover.py` (Pillow). The image uses
+  153,600 Flash bytes and the existing LVGL partial buffer, not a full-screen RAM
+  allocation. `startup-preview.png` is a production-renderer preview.
+  The any-key hint is rendered separately; no game character artwork is replaced.
+
 - `images/niuma/ponytail-user-reference.png`: local-only user-supplied character
   reference, excluded from source commits and firmware. Redistribution rights
   for this design reference are not asserted by this repository.

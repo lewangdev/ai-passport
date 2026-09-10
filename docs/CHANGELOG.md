@@ -6,6 +6,10 @@
 
 ## Unreleased
 
+- Added the supplied cover as a 240 x 320 startup screen. Any key dismisses it
+  without activating the next menu. Original characters, gameplay and audio
+  defaults are unchanged. Loading gestures are not replayed after loading.
+
 - Centered menu labels by their measured one/two-line text height to align with
   icons. Matched male and female head height, width and facial feature anchors,
   retaining the male side-part and square jaw and the female ponytail.

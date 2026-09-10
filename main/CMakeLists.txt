@@ -4,6 +4,7 @@ idf_component_register(
          "niuma_app.c"
          "niuma_view.c"
          "../assets/fonts/niuma_font.c"
+         "../assets/images/niuma/niuma_cover.c"
          "niuma_model.c"
          "niuma_game.c"
          "niuma_save.c"

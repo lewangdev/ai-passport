@@ -23,6 +23,12 @@
 
 ## 图片（images）
 
+- `images/niuma/community-cover-v1.png`：用户提供的开机封面，原图保持不变。
+  `niuma_cover.c` 为其 240 x 320 RGB565 版本；安装 Pillow 后运行
+  `python3 tools/prepare_niuma_cover.py` 重新生成。图片使用 153,600 字节 Flash
+  和已有 LVGL 局部缓冲，不额外分配全屏 RAM。`startup-preview.png` 为实际渲染预览。
+  任意键提示单独绘制，不替换任何游戏人物素材。
+
 - `images/niuma/ponytail-user-reference.png`：仅在本地保留的用户角色参考图，
   不纳入源码提交或固件。本仓库不声明该设计参考图的再分发授权。
 - 同目录的 `ponytail-standing-preview.png` 和 `ponytail-home-preview.png`：

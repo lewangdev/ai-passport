@@ -641,7 +641,36 @@ static void character_card(void){
 int main(void){
     lv_init();lv_display_t*d=lv_display_create(240,320);lv_display_set_color_format(d,LV_COLOR_FORMAT_RGB565);
     lv_display_set_buffers(d,dma,NULL,sizeof(dma),LV_DISPLAY_RENDER_MODE_PARTIAL);lv_display_set_flush_cb(d,flush);
-    assert(niuma_app_start());advance(100);capture("boot");
+    assert(niuma_app_start());advance(100);capture("splash");
+    assert(splash && view.kind==NM_VIEW_SPLASH && !saves);
+    lv_tick_inc(61000);advance(100);
+    assert(splash && !sleeping && !saves);
+    for(unsigned k=0;k<3;++k){
+        splash=true;page=P_BOOT;selection=0;describe();
+        nm_state_t before=state;unsigned writes=saves;
+        press((bsp_btn_t)k,BSP_BTN_PRESS);assert(splash);
+        press((bsp_btn_t)k,BSP_BTN_CLICK);
+        assert(!splash && page==P_BOOT && selection==0 && saves==writes);
+        assert(!memcmp(&state,&before,sizeof(state)));
+    }
+    splash=true;press(BSP_BTN_OK,BSP_BTN_LONG);assert(!splash && page==P_BOOT);
+    splash=true;press(BSP_BTN_UP,BSP_BTN_DOUBLE);assert(!splash && page==P_BOOT && !saves);
+    /* Loading ignores queued gestures; failed loads still require the same
+       explicit retry/reset flow after the cover has been dismissed. */
+    override_store=true;fake_store=(nm_store_status_t){.phase=NM_STORE_LOADING,.battery=78};
+    started=false;splash=true;
+    press(BSP_BTN_OK,BSP_BTN_CLICK);assert(!started && splash && !saves);
+    fake_store.phase=NM_STORE_ERROR;advance(100);
+    assert(started && splash && page==P_START_ERROR && !saves);
+    press(BSP_BTN_DOWN,BSP_BTN_CLICK);assert(!splash && page==P_START_ERROR && selection==0 && !saves);
+    override_store=false;page=P_BOOT;describe();
+    /* A loaded game is not resumed or altered by the entry gesture either. */
+    loaded=true;splash=true;state.english=true;describe();
+    nm_state_t restored=state;
+    press(BSP_BTN_OK,BSP_BTN_CLICK);
+    assert(!splash && page==P_BOOT && !memcmp(&restored,&state,sizeof(state)) && !saves);
+    loaded=false;state.english=false;
+    capture("boot");
     expression_gallery();
     character_card();
     if(getenv("NM_VISUAL_ONLY")){
