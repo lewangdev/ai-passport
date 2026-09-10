@@ -12,11 +12,11 @@ Keep each asset in the matching subdirectory and document its destination, namin
 
 Store reusable font files and generated font sources in `fonts/`.
 
-- `fonts/niuma_font.c`: Source Han Sans SC Regular, 14 px, 4 bpp, ASCII plus
+- `fonts/niuma_font.c`: Source Han Sans SC Medium, 14 px, 4 bpp, ASCII plus
   the non-ASCII characters in `main/niuma_*` sources. Compiled by the NiuMa
   application. SIL Open Font License: `fonts/niuma-font-LICENSE.txt`.
   Regenerate with `node tools/prepare_niuma_font.cjs FONT.otf LV_FONT_CONV.js`
-  using Source Han Sans SC Regular and `lv_font_conv` 1.5.3.
+  using Source Han Sans SC Medium and `lv_font_conv` 1.5.3.
 
 - Use descriptive names that include the family, weight, size, and format when relevant.
 - Document the source, license, character range, conversion command, and expected destination.
@@ -24,6 +24,14 @@ Store reusable font files and generated font sources in `fonts/`.
 - Do not commit fonts whose license does not permit redistribution.
 
 ## Images
+
+- `images/niuma/ponytail-user-reference.png`: local-only user-supplied character
+  reference, excluded from source commits and firmware. Redistribution rights
+  for this design reference are not asserted by this repository.
+- `images/niuma/ponytail-standing-preview.png` and `ponytail-home-preview.png`
+  in the same folder: 240 x 320 previews rendered from the application sprite
+  code. Regenerate with the `tests/niuma_render` target and `NM_VISUAL_ONLY=1`;
+  the executable writes PPM previews in the system temporary directory.
 
 Store reusable source images and generated display assets in `images/`.
 

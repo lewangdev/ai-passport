@@ -1,4 +1,5 @@
 #include "niuma_art.h"
+#include "niuma_icons.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,6 +13,11 @@ static void check_pixels(void){
     }
 }
 int main(void){
+    for(unsigned i=0;i<NM_ICON_COUNT;++i){
+        unsigned pixels=0;for(unsigned y=0;y<12;++y){assert(!(nm_icons[i][y]&0xf000));pixels|=nm_icons[i][y];}
+        assert(pixels);
+        for(unsigned j=i+1;j<NM_ICON_COUNT;++j)assert(memcmp(nm_icons[i],nm_icons[j],sizeof(nm_icons[i])));
+    }
     for(unsigned i=0;i<16;++i)guarded.before[i]=guarded.after[i]=0xa55a;
     for(unsigned gender=0;gender<2;++gender)for(unsigned tired=0;tired<2;++tired){
         nm_state_t s;nm_init(&s,1,gender,0);s.burnout=tired;s.mess=4;
@@ -35,8 +41,28 @@ int main(void){
     for(unsigned a=0;a<NM_ACTION_COUNT;++a)assert(nm_art_action_scene((nm_action_t)a)==expected[a]);
     assert(nm_art_action_scene((nm_action_t)-1)==NM_SCENE_STAND);
     nm_state_t s;nm_init(&s,1,0,0);
+    assert(nm_art_expression(&s,NM_SCENE_SLEEP)==NM_FACE_SLEEP);
+    assert(nm_art_expression(&s,NM_SCENE_OFFICE)==NM_FACE_FOCUSED);
+    assert(nm_art_expression(&s,NM_SCENE_FRIEND)==NM_FACE_HAPPY);
+    assert(nm_art_expression(&s,NM_SCENE_LEAVE)==NM_FACE_SURPRISED);
+    s.stat[NM_MOOD]=20;assert(nm_art_expression(&s,NM_SCENE_STAND)==NM_FACE_SAD);
+    s.stat[NM_STRESS]=80;assert(nm_art_expression(&s,NM_SCENE_STAND)==NM_FACE_STRESSED);
+    s.burnout=1;assert(nm_art_expression(&s,NM_SCENE_OFFICE)==NM_FACE_TIRED);
+    nm_init(&s,1,true,0);nm_art_render(guarded.pixels,&s,NM_SCENE_STAND,1);
+    assert(guarded.pixels[27*NM_ART_W+59]==0x7c2d); /* Shaded, broad fringe. */
+    assert(guarded.pixels[39*NM_ART_W+57]==0x2144); /* Oval pupil. */
+    assert(guarded.pixels[40*NM_ART_W+56]==0x2144);
+    assert(guarded.pixels[39*NM_ART_W+56]==0xef5b); /* Curved pupil corner. */
+    assert(guarded.pixels[44*NM_ART_W+61]==0x2144); /* Separated smile. */
+    nm_art_render(repeat,&s,NM_SCENE_STAND,24);
+    assert(repeat[39*NM_ART_W+57]==0xef5b); /* Blink preserves the face. */
+    assert(repeat[43*NM_ART_W+60]==0x2144); /* Smile survives a blink. */
     for(unsigned gender=0;gender<2;++gender){
         nm_init(&s,1,gender,0);
+        nm_art_render(guarded.pixels,&s,NM_SCENE_STAND,1);
+        assert(guarded.pixels[26*NM_ART_W+59]==0x2144); /* Same head crown height. */
+        assert(guarded.pixels[38*NM_ART_W+49]==0x2144); /* Same head left/right span. */
+        assert(guarded.pixels[38*NM_ART_W+70]==0x2144);
         nm_art_render(guarded.pixels,&s,NM_SCENE_OFFICE,1);
         assert(guarded.pixels[61*NM_ART_W+60]==0x2144); /* Shoes below y=53 desktop. */
         s.burnout=1;nm_art_render(guarded.pixels,&s,NM_SCENE_OFFICE,1);

@@ -185,12 +185,18 @@ tests. Hardware behavior not exercised must remain explicitly unverified.
 ## Software completion audit
 
 The software implementation audit is complete. The complete validation gate
-passed after the final scene and game-status changes. This does not constitute
+passed after the icon, expression, font and spacing refinements. This does not constitute
 device acceptance, a release, a commit or a flash operation.
 
-- Application image: 887,248 bytes; merged image: 952,784 bytes.
+- Application image: 895,312 bytes; merged image: 960,848 bytes.
 - Artifact: `build/FoloToy-AI-Passport-full.bin` (rebuild with `./tools/validate.sh`).
-- SHA-256: `b0292eb89ab33c7f9014b2536ed6072a14173c4ee34f6183be5183fdda7c778a`.
+- SHA-256: `ecb83652c651d6b668cffa7d4d8bae9d15991b804c65cb177a84be3455fbff01`.
+- Menu text block centering and equal male/female head anchors are asserted in
+  the host tests, including one-line and wrapped menu entries.
+- The wider ponytail portrait adds oval-eye/blink/smile pixel assertions and
+  separate home/office camera checks. Standing and home previews use production art.
+- Visual checks cover original pixel icons, eight expression states, battery
+  cells, rounded safe areas and both languages. UI test heap peak: 19,552 bytes.
 - Protected partition addresses, partition-table MD5 and merged-byte ranges passed.
 - Build: PASS. Host tests: PASS. Device tests: NOT RUN.
 - Unverified on hardware: boot/display refresh, ADC button feel and two-second

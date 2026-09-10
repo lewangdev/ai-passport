@@ -10,10 +10,10 @@
 
 可复用的字库文件与生成的字库源码放在 `fonts/`。
 
-- `fonts/niuma_font.c`：思源黑体简体中文 Regular，14 px、4 bpp，包含 ASCII
+- `fonts/niuma_font.c`：思源黑体简体中文 Medium，14 px、4 bpp，包含 ASCII
   以及 `main/niuma_*` 源码中的非 ASCII 字符，由牛马歌子应用编译使用。
   SIL 开放字体许可证：`fonts/niuma-font-LICENSE.txt`。
-  使用思源黑体简体中文 Regular 和 `lv_font_conv` 1.5.3，执行
+  使用思源黑体简体中文 Medium 和 `lv_font_conv` 1.5.3，执行
   `node tools/prepare_niuma_font.cjs FONT.otf LV_FONT_CONV.js` 可重新生成。
 
 - 命名要能反映字族、字重、字级与格式。
@@ -22,6 +22,12 @@
 - 不提交许可不允许分发的字库。
 
 ## 图片（images）
+
+- `images/niuma/ponytail-user-reference.png`：仅在本地保留的用户角色参考图，
+  不纳入源码提交或固件。本仓库不声明该设计参考图的再分发授权。
+- 同目录的 `ponytail-standing-preview.png` 和 `ponytail-home-preview.png`：
+  从应用像素代码渲染的 240 x 320 预览。构建 `tests/niuma_render` 后，设置
+  `NM_VISUAL_ONLY=1` 运行，即可在系统临时目录重新生成 PPM 预览。
 
 可复用的源图与生成的显示资产放在 `images/`。
 

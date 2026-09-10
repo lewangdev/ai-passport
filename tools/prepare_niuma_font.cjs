@@ -12,3 +12,4 @@ const dest=path.join(root,'assets/fonts/niuma_font.c');
 fs.mkdirSync(path.dirname(dest),{recursive:true});
 cp.execFileSync(process.execPath,[converter,'--font',path.resolve(font),'--size','14','--bpp','4','--format','lvgl','--range','0x20-0x7e','--symbols',symbols,'--no-compress','--lv-font-name','niuma_font','-o',dest],{stdio:'inherit'});
 console.log(`Generated ${dest}: ${symbols.length} non-ASCII characters plus ASCII`);
+fs.writeFileSync(dest,fs.readFileSync(dest,'utf8').trimEnd()+'\n');

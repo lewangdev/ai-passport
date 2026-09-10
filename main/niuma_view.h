@@ -2,7 +2,7 @@
 #include "niuma_art.h"
 #include "niuma_storage.h"
 
-typedef enum { NM_VIEW_MENU, NM_VIEW_SCENE, NM_VIEW_HOME, NM_VIEW_GAME, NM_VIEW_TEXT, NM_VIEW_MEETING, NM_VIEW_ESCAPE } nm_view_kind_t;
+typedef enum { NM_VIEW_MENU, NM_VIEW_SCENE, NM_VIEW_HOME, NM_VIEW_GAME, NM_VIEW_TEXT, NM_VIEW_MEETING, NM_VIEW_ESCAPE, NM_VIEW_STATS } nm_view_kind_t;
 typedef struct {
     nm_view_kind_t kind;
     nm_scene_t scene;

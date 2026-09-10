@@ -18,7 +18,17 @@ nm_scene_t nm_art_action_scene(nm_action_t action){
 }
 
 static const uint16_t palette[4]={0xce96,0x2144,0x7c2d,0xef5b};
-typedef struct {uint16_t *p;} paint_t;
+typedef struct {uint16_t *p;nm_scene_t scene;} paint_t;
+nm_face_t nm_art_expression(const nm_state_t *s,nm_scene_t scene){
+    if(scene==NM_SCENE_SLEEP)return NM_FACE_SLEEP;
+    if(s->burnout || s->stat[NM_ENERGY]<20)return NM_FACE_TIRED;
+    if(s->stat[NM_STRESS]>=75)return NM_FACE_STRESSED;
+    if(s->stat[NM_MOOD]<30)return NM_FACE_SAD;
+    if(scene==NM_SCENE_LEAVE)return NM_FACE_SURPRISED;
+    if(scene==NM_SCENE_FRIEND || s->stat[NM_MOOD]>=80)return NM_FACE_HAPPY;
+    if(scene==NM_SCENE_OFFICE || scene==NM_SCENE_STUDY)return NM_FACE_FOCUSED;
+    return NM_FACE_CALM;
+}
 static void rect(paint_t p,int x,int y,int w,int h,unsigned color){
     for(int yy=y;yy<y+h;++yy)for(int xx=x;xx<x+w;++xx)
         if(xx>=0 && xx<NM_ART_W && yy>=0 && yy<NM_ART_H)p.p[yy*NM_ART_W+xx]=palette[color%4];
@@ -38,19 +48,42 @@ static void walking_legs(paint_t p,int x,int y,unsigned frame){
         }
     }
 }
+static void character_face(paint_t p,int x,int y,nm_face_t face,unsigned frame){
+    bool closed=face==NM_FACE_SLEEP || face==NM_FACE_TIRED || frame%24==0;
+    for(unsigned i=0;i<2;++i){
+        int eye=x+7+(int)i*8;
+        rect(p,eye,y+11,3,1,1);
+        if(closed){rect(p,eye,y+14,3,1,1);}
+        else{
+            /* Broad oval pupils, rather than one-pixel vertical strokes. */
+            rect(p,eye+1,y+13,2,3,1);rect(p,eye,y+14,1,1,1);
+        }
+        if(face==NM_FACE_TIRED)rect(p,eye,y+16,3,1,2);
+        if(face==NM_FACE_FOCUSED)rect(p,eye+(i?0:1),y+10,2,1,1);
+    }
+    if(face==NM_FACE_SURPRISED){rect(p,x+12,y+17,2,2,1);}
+    else if(face==NM_FACE_SAD || face==NM_FACE_STRESSED){
+        rect(p,x+12,y+17,3,1,1);rect(p,x+11,y+18,1,1,1);rect(p,x+15,y+18,1,1,1);
+        if(face==NM_FACE_STRESSED){rect(p,x+23,y+11,1,2,1);rect(p,x+22,y+13,2,2,2);}
+    }else if(face==NM_FACE_SLEEP || face==NM_FACE_TIRED){rect(p,x+12,y+18,3,1,1);}
+    else{
+        rect(p,x+11,y+17,1,1,1);rect(p,x+15,y+17,1,1,1);rect(p,x+12,y+18,3,1,1);
+        if(face==NM_FACE_HAPPY){rect(p,x+12,y+17,3,1,1);rect(p,x+5,y+16,1,1,2);rect(p,x+17,y+16,1,1,2);}
+    }
+    if(face==NM_FACE_SLEEP){rect(p,x+25,y+3,5,1,1);rect(p,x+27,y+4,2,1,1);rect(p,x+25,y+5,5,1,1);}
+}
 static void person(paint_t p,const nm_state_t *s,int x,int y,bool seated,bool walking,unsigned frame){
     bool tired=s->burnout || s->stat[NM_ENERGY]<20;
     if(tired)y+=2;
-    if(s->gender)sprite(p,nm_sprite_ponytail,15,x-5+(walking?(int)(frame%2):0),y+4);
-    sprite(p,s->gender?nm_sprite_femaleHead:nm_sprite_head,18,x,y);
-    sprite(p,s->gender?nm_sprite_femaleBody:nm_sprite_body,11,x,y+18);
+    if(s->gender){
+        sprite(p,nm_sprite_ponytail,25,x-8+(walking?(int)(frame%2):0),y-6);
+        sprite(p,nm_sprite_femaleHead,22,x-2,y-4);
+        sprite(p,nm_sprite_femaleBody,11,x-2,y+18);
+    }else{sprite(p,nm_sprite_head,22,x-2,y-4);sprite(p,nm_sprite_body,11,x,y+18);}
     if(walking)walking_legs(p,x,y+29,frame);
     else sprite(p,seated?nm_sprite_seated:nm_sprite_standing,seated?6:9,x,y+29);
-    if(tired || frame%24==0){
-        unsigned left=s->gender?8:9,right=s->gender?14:15;
-        rect(p,x+left,y+9,1,2,3);rect(p,x+right,y+9,1,2,3);
-        rect(p,x+left-1,y+9,2,1,1);rect(p,x+right-1,y+9,2,1,1);
-    }
+    nm_face_t face=nm_art_expression(s,p.scene);
+    character_face(p,x-2,y-4,face,frame);
     if(s->equipped[2]!=255){
         if(s->equipped[2]%4==0){rect(p,x+4,y+33,4,2,3);rect(p,x+12,y+33,4,2,3);}
         if(s->equipped[2]%4==1){box(p,x+1,y+4,18,7,2);}
@@ -67,19 +100,22 @@ static void bento(paint_t p,int x,int y){
     rect(p,x+2,y+3,8,8,2);rect(p,x+15,y+3,6,4,1);rect(p,x+15,y+9,6,3,2);
 }
 void nm_art_render(uint16_t *pixels,const nm_state_t *s,nm_scene_t scene,unsigned frame){
-    paint_t p={pixels};rect(p,0,0,120,80,0);rect(p,0,71,120,1,2);
+    paint_t p={pixels,scene};rect(p,0,0,120,80,0);rect(p,0,71,120,1,2);
     for(int x=0;x<120;x+=15)rect(p,x,77,6,1,2);
     bool meal=scene==NM_SCENE_EAT || scene==NM_SCENE_RICE || scene==NM_SCENE_NOODLES;
     if(scene==NM_SCENE_OFFICE || scene==NM_SCENE_STUDY || meal){
         box(p,4,7,25,22,2);rect(p,16,7,1,22,2);rect(p,4,18,25,1,2);
         box(p,99,6,13,13,1);rect(p,105,9,1,5,1);rect(p,105,13,4,1,1);
-        box(p,77,42,8,23,1);rect(p,78,43,6,21,2);
+        box(p,79,40,6,18,1);rect(p,80,41,4,16,2);
+        rect(p,73,59,13,3,1);rect(p,80,62,2,7,1);rect(p,75,69,12,2,1);
         /* Hands meet the keyboard; seated legs remain below the desktop. */
         person(p,s,53,27,true,false,frame);
-        rect(p,22,53,80,3,1);rect(p,25,56,3,16,1);rect(p,96,56,3,16,1);
+        rect(p,22,53,80,2,1);rect(p,25,55,2,17,1);rect(p,96,55,2,17,1);
         box(p,25,57,29,14,2);
         if(!meal){box(p,26,33,19,16,1);rect(p,28,35,15,12,2);rect(p,34,49,3,4,1);rect(p,59,51,15,2,2);}
         rect(p,61+(int)(frame%2)*2,49,5,2,3);
+        /* Bent sleeve and hand reach toward the keyboard, as in the reference. */
+        rect(p,54,47,3,4,1);rect(p,50,50,7,2,1);rect(p,47,51,5,2,3);
         if(scene==NM_SCENE_STUDY){box(p,48,45,13,8,1);rect(p,54,45,1,8,1);}
         if(scene==NM_SCENE_EAT)bento(p,27,38);
         if(scene==NM_SCENE_RICE){
@@ -189,7 +225,7 @@ void nm_art_render(uint16_t *pixels,const nm_state_t *s,nm_scene_t scene,unsigne
 }
 void nm_art_game(uint16_t *pixels,const nm_state_t *s,const nm_game_t *g){
     nm_art_render(pixels,s,g->kind==NM_GAME_COMMUTE?NM_SCENE_TRAIN:g->kind==NM_GAME_ESCAPE?NM_SCENE_LEAVE:NM_SCENE_OFFICE,g->elapsed/250);
-    paint_t p={pixels};
+    paint_t p={pixels,NM_SCENE_OFFICE};
     if(g->kind==NM_GAME_TYPING){
         for(unsigned i=0;i<3;++i){rect(p,8,9+i*19,104,15,0);box(p,8,9+i*19,104,15,i==g->lane?1:2);rect(p,49,11+i*19,25,11,2);}
         rect(p,10+g->round_ms/20,12+g->lane*19,3,9,1);box(p,2,13+g->target*19,4,7,1);

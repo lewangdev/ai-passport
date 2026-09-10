@@ -26,9 +26,22 @@ and current career direction. Existing saves can be continued from the title pag
 
 ## Your day
 
-The counter beginning with `D` is a simulated day, not a real-world date.
+The number beside the calendar icon is a simulated day, not a real-world date.
 Each day has six action slots. Five workdays are followed by two weekend days.
 Powering off does not reduce stats or advance time.
+
+The header uses a speaker with four volume bars and a four-cell battery. A
+dash inside the battery means the reading is unavailable; an exclamation mark
+warns at 15% or below. Exact battery and volume values remain in Device status
+and Sound settings. A disk indicates a pending save; a disk with an exclamation
+mark indicates a save error.
+
+Five large home icons select work, food, rest, chat and more; the selected
+action's name appears underneath. The need strip shows food, energy, mood,
+stress and health, from left to right, with values and meters. Higher stress is
+worse. Employee stats pairs these same icons with names. Coins and six outlined
+action slots sit below; filled slots are actions remaining. Character faces
+respond to mood, energy, stress and the current scene without changing gameplay.
 After sleep, a morning summary shows the week/day and restored needs. Start
 today or check stats without advancing again. Burnout/recovery notices take
 priority when that status changes overnight.

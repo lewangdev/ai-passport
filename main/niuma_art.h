@@ -10,6 +10,9 @@ typedef enum { NM_SCENE_STAND, NM_SCENE_OFFICE, NM_SCENE_HOME, NM_SCENE_PARK,
     NM_SCENE_CLEAN, NM_SCENE_TREAT, NM_SCENE_TOILET, NM_SCENE_DRINK,
     NM_SCENE_COOK, NM_SCENE_RICE, NM_SCENE_NOODLES, NM_SCENE_WATER,
     NM_SCENE_MILK_TEA, NM_SCENE_COUNT } nm_scene_t;
+typedef enum { NM_FACE_CALM,NM_FACE_HAPPY,NM_FACE_FOCUSED,NM_FACE_TIRED,
+    NM_FACE_STRESSED,NM_FACE_SAD,NM_FACE_SLEEP,NM_FACE_SURPRISED,NM_FACE_COUNT } nm_face_t;
+nm_face_t nm_art_expression(const nm_state_t *s,nm_scene_t scene);
 nm_scene_t nm_art_action_scene(nm_action_t action);
 /* RGB565, host-endian, logical 120 x 80 (display at integer 2x).
    Writes only the supplied fixed-size buffer; no allocation or LVGL calls. */

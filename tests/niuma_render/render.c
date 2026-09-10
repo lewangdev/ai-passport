@@ -40,8 +40,22 @@ static void flush(lv_display_t*d,const lv_area_t*a,uint8_t*p){
     lv_display_flush_ready(d);
 }
 static void advance(int ms){for(int t=0;t<ms;t+=10){lv_tick_inc(10);lv_timer_handler();}}
+static void check_corners(void){
+    for(int y=0;y<16;++y)for(int x=0;x<16;++x){
+        int dx=31-2*x,dy=31-2*y;
+        if(dx*dx+dy*dy<=32*32)continue;
+        assert(fb[y*240+x]==0 && fb[y*240+239-x]==0);
+        assert(fb[(319-y)*240+x]==0 && fb[(319-y)*240+239-x]==0);
+    }
+    assert(fb[120]!=0 && fb[319*240+120]!=0);
+}
 static void capture_frame(const char *name,unsigned frame){
     describe();nm_view_draw(&view,&state,&game,nm_storage_status(),frame);lv_obj_invalidate(screen);lv_refr_now(NULL);
+    if(view.kind==NM_VIEW_HOME){
+        unsigned crop_y=view.scene==NM_SCENE_HOME?12:20;
+        assert(art_image.data==(const uint8_t *)(art_pixels+crop_y*NM_ART_W+20));
+    }
+    check_corners();
     char path[256];snprintf(path,sizeof(path),"/tmp/niuma-%s.ppm",name);
     FILE*f=fopen(path,"wb");assert(f);fprintf(f,"P6\n240 320\n255\n");
     for(int i=0;i<240*320;++i){uint16_t p=fb[i];uint8_t rgb[]={((p>>11)&31)*255/31,((p>>5)&63)*255/63,(p&31)*255/31};fwrite(rgb,1,3,f);}fclose(f);
@@ -51,6 +65,22 @@ static void press(bsp_btn_t key,bsp_btn_ev_t event){niuma_app_key(key,event,NULL
 static unsigned layout_errors;
 static void check_label(lv_obj_t *obj,const char *name){
     if(lv_obj_has_flag(obj,LV_OBJ_FLAG_HIDDEN))return;
+    if(view.kind==NM_VIEW_MENU)for(unsigned i=0;i<5;++i)if(obj==row_labels[i]){
+        assert(abs(2*lv_obj_get_y(obj)+lv_obj_get_height(obj)-43)<=1);
+        assert(lv_obj_get_y(obj)>=0 && lv_obj_get_y(obj)+lv_obj_get_height(obj)<=43);
+    }
+    if(obj==status_label || obj==battery_label || obj==hint){
+        lv_area_t area;lv_obj_get_coords(obj,&area);
+        for(int side=0;side<2;++side)for(int bottom=0;bottom<2;++bottom){
+            int x=side?area.x2:area.x1,y=bottom?area.y2:area.y1;
+            assert(x>=0 && x<240 && y>=0 && y<320);
+            int edge_x=x<120?x:239-x,edge_y=y<160?y:319-y;
+            if(edge_x<16 && edge_y<16){
+                int dx=31-2*edge_x,dy=31-2*edge_y;
+                assert(dx*dx+dy*dy<=32*32);
+            }
+        }
+    }
     const unsigned char *text=(const unsigned char *)lv_label_get_text(obj);
     while(*text){
         uint32_t cp=*text++;unsigned continuation=0;
@@ -372,6 +402,12 @@ static void device_states(void){
             if(i==1 || i==2)assert(strchr(battery,'!'));
             if(i>=3)assert(!strchr(battery,'!'));
             assert(lv_obj_get_x(status_label)+lv_obj_get_width(status_label)<=lv_obj_get_x(battery_label));
+            lv_refr_now(NULL);
+            /* Battery cells, unavailable dash and low-charge warning are drawn,
+             * not merely represented by hidden text. */
+            assert(fb[9*240+195]==lv_color_to_u16(lv_color_hex(ink)));
+            if(fake_store.battery>0)assert(fb[13*240+198]==lv_color_to_u16(lv_color_hex(ink)));
+            if(fake_store.battery<0)assert(fb[14*240+207]==lv_color_to_u16(lv_color_hex(ink)));
             if(lang==0 && i==1)capture("device-low-battery");
         }
     }
@@ -568,10 +604,54 @@ static void game_gestures(void){
 }
 #include "career_journey.inc"
 
+static void expression_gallery(void){
+    static uint16_t atlas[480*320],tile[NM_ART_W*NM_ART_H];
+    for(unsigned gender=0;gender<2;++gender)for(unsigned face=0;face<NM_FACE_COUNT;++face){
+        nm_state_t sample;nm_init(&sample,1,gender,0);nm_scene_t scene=NM_SCENE_STAND;
+        if(face==NM_FACE_HAPPY)sample.stat[NM_MOOD]=90;
+        if(face==NM_FACE_FOCUSED)scene=NM_SCENE_OFFICE;
+        if(face==NM_FACE_TIRED)sample.burnout=1;
+        if(face==NM_FACE_STRESSED)sample.stat[NM_STRESS]=85;
+        if(face==NM_FACE_SAD)sample.stat[NM_MOOD]=20;
+        if(face==NM_FACE_SLEEP)scene=NM_SCENE_SLEEP;
+        if(face==NM_FACE_SURPRISED)scene=NM_SCENE_LEAVE;
+        assert(nm_art_expression(&sample,scene)==(nm_face_t)face);
+        nm_art_render(tile,&sample,scene,1);
+        for(unsigned y=0;y<80;++y)for(unsigned x=0;x<120;++x)
+            atlas[(gender*160+face/4*80+y)*480+face%4*120+x]=tile[y*120+x];
+    }
+    FILE *file=fopen("/tmp/niuma-expressions.ppm","wb");assert(file);fprintf(file,"P6\n480 320\n255\n");
+    for(unsigned i=0;i<480*320;++i){uint16_t p=atlas[i];uint8_t rgb[]={((p>>11)&31)*255/31,((p>>5)&63)*255/63,(p&31)*255/31};fwrite(rgb,1,3,file);}fclose(file);
+}
+static void character_card(void){
+    nm_state_t sample;nm_init(&sample,1,true,0);
+    uint16_t tile[NM_ART_W*NM_ART_H];nm_art_render(tile,&sample,NM_SCENE_STAND,1);
+    FILE *file=fopen("/tmp/niuma-female-reference-card.ppm","wb");assert(file);
+    fprintf(file,"P6\n240 320\n255\n");
+    for(int y=0;y<320;++y)for(int x=0;x<240;++x){
+        uint16_t p=0xef5b;
+        if(x>=24 && x<216 && y>=22 && y<298){
+            p=tile[(23+(y-22)/6)*NM_ART_W+42+(x-24)/6];
+            if(p==0xce96)p=0xef5b;
+        }
+        uint8_t rgb[]={((p>>11)&31)*255/31,((p>>5)&63)*255/63,(p&31)*255/31};fwrite(rgb,1,3,file);
+    }
+    fclose(file);
+}
 int main(void){
     lv_init();lv_display_t*d=lv_display_create(240,320);lv_display_set_color_format(d,LV_COLOR_FORMAT_RGB565);
     lv_display_set_buffers(d,dma,NULL,sizeof(dma),LV_DISPLAY_RENDER_MODE_PARTIAL);lv_display_set_flush_cb(d,flush);
     assert(niuma_app_start());advance(100);capture("boot");
+    expression_gallery();
+    character_card();
+    if(getenv("NM_VISUAL_ONLY")){
+        for(unsigned gender=0;gender<2;++gender){
+            nm_init(&state,1,gender,0);loaded=true;home();capture(gender?"polish-female":"polish-male");
+        }
+        nm_close_work(&state,&receipt);home();capture("polish-evening");
+        go(P_SETTINGS);capture("polish-settings");go(P_STATS);capture("polish-stats");
+        return 0;
+    }
     press(BSP_BTN_OK,BSP_BTN_CLICK);assert(page==P_CREATE);
     press(BSP_BTN_DOWN,BSP_BTN_CLICK);press(BSP_BTN_OK,BSP_BTN_CLICK);assert(page==P_NAME);
     press(BSP_BTN_DOWN,BSP_BTN_CLICK);press(BSP_BTN_OK,BSP_BTN_CLICK);assert(page==P_BADGE && saves);
@@ -630,8 +710,11 @@ int main(void){
             for(unsigned selected=0;selected<count;++selected){
                 selection=selected;describe();nm_view_draw(&view,&state,&game,nm_storage_status(),1);
                 assert(nm_valid(&state));lv_obj_update_layout(screen);
+                lv_refr_now(NULL);check_corners();
                 check_label(body,"body");check_label(heading,"title");check_label(hint,"hint");
                 check_label(status_label,"status");check_label(battery_label,"battery");
+                for(unsigned m=0;m<5;++m)check_label(metrics[m],"need metric");
+                check_label(wallet,"coins");
                 check_label(page_label,"page counter");
                 for(unsigned i=0;i<5;++i)if(!lv_obj_has_flag(rows[i],LV_OBJ_FLAG_HIDDEN))check_label(row_labels[i],"option");
             }
