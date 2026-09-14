@@ -103,7 +103,7 @@ static void draw_chrome(lv_event_t *event){
         for(unsigned i=0;i<5;++i)icon(layer,stats[i],18,63+i*28,2,ink);
     }
 }
-enum { NM_CORNER_RADIUS=16 };
+enum { NM_CORNER_RADIUS=30 };
 /* Pixel-aligned casing mask. Draw after children without an offscreen layer. */
 static void draw_corners(lv_event_t *event){
     lv_layer_t *layer=lv_event_get_layer(event);
@@ -148,7 +148,7 @@ bool nm_view_init(void){
     heading=label(screen,8,29,224,23);
     page_label=label(screen,184,29,48,23);
     lv_obj_set_style_text_align(page_label,LV_TEXT_ALIGN_RIGHT,0);
-    body=label(screen,12,65,216,170);hint=label(screen,4,294,232,21);
+    body=label(screen,12,65,216,170);hint=label(screen,14,294,212,21);
     lv_obj_set_style_bg_color(hint,lv_color_hex(ink),0);lv_obj_set_style_bg_opa(hint,LV_OPA_COVER,0);
     lv_obj_set_style_text_color(hint,lv_color_hex(paper),0);
     lv_obj_set_style_text_align(hint,LV_TEXT_ALIGN_CENTER,0);
@@ -189,7 +189,7 @@ void nm_view_draw(const nm_view_t *v,const nm_state_t *s,const nm_game_t *g,nm_s
     lv_obj_remove_flag(status_label,LV_OBJ_FLAG_HIDDEN);
     lv_obj_remove_flag(heading,LV_OBJ_FLAG_HIDDEN);
     lv_obj_remove_flag(body,LV_OBJ_FLAG_HIDDEN);
-    lv_obj_set_pos(hint,4,294);lv_obj_set_size(hint,232,21);
+    lv_obj_set_pos(hint,14,294);lv_obj_set_size(hint,212,21);
     char top[100],battery[24];
     bool low=store.battery>=0 && store.battery<=15;
     if(store.battery<0)snprintf(battery,sizeof(battery),s->english?"BAT --":"电量 --");

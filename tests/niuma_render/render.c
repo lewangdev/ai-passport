@@ -41,9 +41,10 @@ static void flush(lv_display_t*d,const lv_area_t*a,uint8_t*p){
 }
 static void advance(int ms){for(int t=0;t<ms;t+=10){lv_tick_inc(10);lv_timer_handler();}}
 static void check_corners(void){
-    for(int y=0;y<16;++y)for(int x=0;x<16;++x){
-        int dx=31-2*x,dy=31-2*y;
-        if(dx*dx+dy*dy<=32*32)continue;
+    assert(NM_CORNER_RADIUS==30);
+    for(int y=0;y<30;++y)for(int x=0;x<30;++x){
+        int dx=59-2*x,dy=59-2*y;
+        if(dx*dx+dy*dy<=60*60)continue;
         assert(fb[y*240+x]==0 && fb[y*240+239-x]==0);
         assert(fb[(319-y)*240+x]==0 && fb[(319-y)*240+239-x]==0);
     }
@@ -75,9 +76,9 @@ static void check_label(lv_obj_t *obj,const char *name){
             int x=side?area.x2:area.x1,y=bottom?area.y2:area.y1;
             assert(x>=0 && x<240 && y>=0 && y<320);
             int edge_x=x<120?x:239-x,edge_y=y<160?y:319-y;
-            if(edge_x<16 && edge_y<16){
-                int dx=31-2*edge_x,dy=31-2*edge_y;
-                assert(dx*dx+dy*dy<=32*32);
+            if(edge_x<30 && edge_y<30){
+                int dx=59-2*edge_x,dy=59-2*edge_y;
+                assert(dx*dx+dy*dy<=60*60);
             }
         }
     }

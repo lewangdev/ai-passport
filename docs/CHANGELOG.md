@@ -6,6 +6,9 @@
 
 ## Unreleased
 
+- Increased all four NiuMa screen corner masks from 16 px to 30 px and inset
+  the bottom controls to keep text inside the rounded casing's visible area.
+
 - Added the supplied cover as a 240 x 320 startup screen. Any key dismisses it
   without activating the next menu. Original characters, gameplay and audio
   defaults are unchanged. Loading gestures are not replayed after loading.
